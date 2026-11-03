@@ -3,8 +3,6 @@ import argparse
 import os
 import re
 from datetime import date
-from decimal import Decimal
-from typing import Optional
 
 import requests
 
@@ -17,8 +15,6 @@ TAGS = {
     "capital_spending": ("PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets"),
     "equity": ("StockholdersEquity",),
 }
-EXTRA_TAGS = {"liabilities": ("Liabilities",)}
-FIELDS = ("revenue", "net_income", "operating_cash_flow", "capital_spending", "equity", "roe", "owner_earnings")
 
 
 def sec_session():
@@ -93,8 +89,8 @@ def compute(companyfacts):
         capex = metrics["capital_spending"]["value"]
         roe = None if ni is None or eq is None or eq <= 0 else ni / eq * 100
         owner = None if ocf is None or capex is None else ocf - capex
-        metrics["roe"] = {"value": roe, "tag": "NetIncomeLoss / StockholdersEquity" if roe is not None else "not known"}
-        metrics["owner_earnings"] = {"value": owner, "tag": "NetCashProvidedByUsedInOperatingActivities - capital spending" if owner is not None else "not known"}
+        metrics["roe"] = {"value": roe, "tag": f"{metrics['net_income']['tag']} / {metrics['equity']['tag']}" if roe is not None else "not known"}
+        metrics["owner_earnings"] = {"value": owner, "tag": f"{metrics['operating_cash_flow']['tag']} - {metrics['capital_spending']['tag']}" if owner is not None else "not known"}
         rows.append({"fy_end": end, "metrics": metrics})
     if len(rows) != 5:
         raise ValueError(f"Expected 5 annual 10-K fiscal years; found {len(rows)}. No figures inferred.")
