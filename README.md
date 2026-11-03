@@ -10,7 +10,7 @@ Buffett-inspired business-quality analysis using SEC EDGAR 10-K XBRL facts. Code
    - macOS/Linux: `export SEC_USER_AGENT="Your Name your-email@school.edu"`
 3. Run the skill's numbers: `python .agents/skills/buffett-investor/sec_buffett.py COST`
 4. Run the app: `streamlit run app.py`
-5. Use the Buffett skill to write or update `memos/COST.md` using **only** the displayed computed values.
+5. Validate the offline rules: `python -m unittest discover -s tests -v`\n6. Use the Buffett skill to write or update `memos/COST.md` using **only** the displayed computed values.
 
 The app opens with COST. Enter JPM to inspect missing capital spending; missing inputs stay **not found** and dependent checks **not known**. To test the memo guard, insert an unsupported number such as `40.0%` into the COST memo using the app editor; it should be flagged immediately. The original saved memo is not overwritten unless you click Save.
 
